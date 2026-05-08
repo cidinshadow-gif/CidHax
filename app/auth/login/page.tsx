@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { KeyRound, Loader2 } from "lucide-react"
+import { Key, Loader2, ArrowLeft } from "lucide-react"
 
 export default function LoginPage() {
   const [username, setUsername] = useState("")
@@ -22,7 +22,6 @@ export default function LoginPage() {
     setError(null)
     setLoading(true)
 
-    // Generate the fake email from username to match signup
     const fakeEmail = `${username.toLowerCase()}@keyvault.local`
 
     const supabase = createClient()
@@ -32,7 +31,6 @@ export default function LoginPage() {
     })
 
     if (error) {
-      // Make error message more user-friendly
       if (error.message.includes("Invalid login credentials")) {
         setError("Invalid username or password")
       } else {
@@ -47,66 +45,96 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="flex items-center gap-2">
-              <KeyRound className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-foreground">KeyVault</span>
-            </div>
-          </div>
-          <CardTitle className="text-2xl">Welcome back</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-lg">
-                {error}
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-accent/5 rounded-full blur-[80px]" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
+        {/* Back to Home */}
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to home
+        </Link>
+
+        <Card className="bg-card border-border">
+          <CardHeader className="text-center pb-2">
+            <div className="flex justify-center mb-6">
+              <div className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center glow-primary">
+                <Key className="h-7 w-7 text-primary" />
               </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Enter your username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                "Sign in"
+            <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Sign in to your CidHax account
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {error && (
+                <div className="p-4 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-xl">
+                  {error}
+                </div>
               )}
-            </Button>
-          </form>
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            {"Don't have an account? "}
-            <Link href="/auth/sign-up" className="text-primary hover:underline font-medium">
-              Sign up
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+              <div className="space-y-2">
+                <Label htmlFor="username" className="text-sm font-medium">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  className="h-12 bg-secondary/50 border-border focus:border-primary/50 focus:ring-primary/20"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="h-12 bg-secondary/50 border-border focus:border-primary/50 focus:ring-primary/20"
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium glow-primary" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  "Sign in"
+                )}
+              </Button>
+            </form>
+            <div className="mt-8 text-center">
+              <span className="text-sm text-muted-foreground">
+                {"Don't have an account? "}
+              </span>
+              <Link href="/auth/sign-up" className="text-sm text-primary hover:text-primary/80 font-medium transition-colors">
+                Create account
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        <p className="text-center text-xs text-muted-foreground mt-8">
+          By signing in, you agree to our Terms of Service and Privacy Policy.
+        </p>
+      </div>
     </div>
   )
 }

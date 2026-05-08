@@ -1,6 +1,8 @@
+import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Wallet, ShoppingBag, Users, TrendingUp } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Wallet, ShoppingBag, Users, TrendingUp, ArrowRight, Key } from "lucide-react"
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -52,6 +54,8 @@ export default async function DashboardPage() {
       icon: Wallet,
       color: "text-primary",
       bg: "bg-primary/10",
+      border: "border-primary/20",
+      href: "/dashboard/wallet",
     },
     {
       label: "Total Purchases",
@@ -59,95 +63,134 @@ export default async function DashboardPage() {
       icon: ShoppingBag,
       color: "text-accent",
       bg: "bg-accent/10",
+      border: "border-accent/20",
+      href: "/dashboard/keys",
     },
     {
       label: "Referrals",
       value: referralCount || 0,
       icon: Users,
-      color: "text-chart-2",
-      bg: "bg-chart-2/10",
+      color: "text-primary",
+      bg: "bg-primary/10",
+      border: "border-primary/20",
+      href: "/dashboard/referrals",
     },
     {
       label: "Referral Earnings",
       value: `$${totalEarnings.toFixed(2)}`,
       icon: TrendingUp,
-      color: "text-success",
-      bg: "bg-success/10",
+      color: "text-accent",
+      bg: "bg-accent/10",
+      border: "border-accent/20",
+      href: "/dashboard/referrals",
     },
   ]
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {profile?.username || profile?.email}</p>
+      {/* Welcome Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">
+            Welcome back, <span className="text-gradient">{profile?.username}</span>
+          </h1>
+          <p className="text-muted-foreground mt-1">{"Here's"} an overview of your account</p>
+        </div>
+        <Link href="/store">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 glow-primary">
+            Browse Store
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </Link>
       </div>
 
       {/* Stats Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
-          <Card key={stat.label}>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className={cn(stat.bg, "h-12 w-12 rounded-lg flex items-center justify-center")}>
-                  <stat.icon className={cn("h-6 w-6", stat.color)} />
+          <Link key={stat.label} href={stat.href}>
+            <Card className={`bg-card border-border hover:${stat.border} transition-all duration-300 group cursor-pointer h-full`}>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className={`${stat.bg} h-14 w-14 rounded-2xl flex items-center justify-center border ${stat.border} group-hover:scale-110 transition-transform`}>
+                    <stat.icon className={`h-7 w-7 ${stat.color}`} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
 
       {/* Recent Purchases */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Purchases</CardTitle>
-          <CardDescription>Your latest key purchases</CardDescription>
+      <Card className="bg-card border-border">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-xl">Recent Purchases</CardTitle>
+            <CardDescription>Your latest key purchases</CardDescription>
+          </div>
+          <Link href="/dashboard/keys">
+            <Button variant="ghost" size="sm" className="text-primary gap-2">
+              View All
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
         </CardHeader>
         <CardContent>
           {purchases && purchases.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {purchases.map((purchase) => (
                 <div
                   key={purchase.id}
-                  className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg"
+                  className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/50 rounded-xl border border-border transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <ShoppingBag className="h-5 w-5 text-primary" />
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                      <Key className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <p className="font-medium text-foreground">
                         {purchase.product?.name || "Unknown Product"}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(purchase.created_at).toLocaleDateString()}
+                        {new Date(purchase.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric"
+                        })}
                       </p>
                     </div>
                   </div>
-                  <p className="font-semibold text-foreground">
-                    ${Number(purchase.amount).toFixed(2)}
-                  </p>
+                  <div className="text-right">
+                    <p className="font-semibold text-gradient">
+                      ${Number(purchase.amount).toFixed(2)}
+                    </p>
+                    {purchase.product?.category && (
+                      <span className="text-xs text-muted-foreground">{purchase.product.category}</span>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <ShoppingBag className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No purchases yet</p>
-              <p className="text-sm">Browse the store to buy your first key!</p>
+            <div className="text-center py-12">
+              <div className="h-20 w-20 rounded-2xl bg-secondary/50 border border-border flex items-center justify-center mx-auto mb-4">
+                <ShoppingBag className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <p className="text-lg font-medium text-foreground mb-2">No purchases yet</p>
+              <p className="text-muted-foreground mb-6">Browse the store to buy your first key!</p>
+              <Link href="/store">
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                  Browse Store
+                </Button>
+              </Link>
             </div>
           )}
         </CardContent>
       </Card>
     </div>
   )
-}
-
-function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(" ")
 }

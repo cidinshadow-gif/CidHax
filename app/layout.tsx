@@ -7,8 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'KeyVault - Digital Keys Marketplace',
-  description: 'Buy software and game license keys instantly. Deposit funds, earn referral commissions.',
+  title: 'CidHax - Premium Digital Keys',
+  description: 'Premium marketplace for software and game license keys. Instant delivery, secure transactions, earn with referrals.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background">
+    <html lang="en" className="dark bg-background">
       <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

@@ -3,13 +3,13 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { ShoppingBag, Wallet, Users, Key, ArrowDownToLine, ArrowUpFromLine } from "lucide-react"
+import { ShoppingBag, Wallet, Users, Key, ArrowDownToLine, ArrowUpFromLine, LayoutDashboard } from "lucide-react"
 
 const navItems = [
   {
-    label: "My Purchases",
+    label: "Overview",
     href: "/dashboard",
-    icon: ShoppingBag,
+    icon: LayoutDashboard,
   },
   {
     label: "My Keys",
@@ -42,7 +42,10 @@ export function DashboardNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="space-y-1">
+    <nav className="space-y-2">
+      <div className="px-3 py-2 mb-4">
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Menu</h3>
+      </div>
       {navItems.map((item) => {
         const isActive = pathname === item.href
         return (
@@ -50,13 +53,13 @@ export function DashboardNav() {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
               isActive
-                ? "bg-primary text-primary-foreground"
+                ? "bg-primary/10 text-primary border border-primary/20"
                 : "text-muted-foreground hover:bg-secondary hover:text-foreground"
             )}
           >
-            <item.icon className="h-4 w-4" />
+            <item.icon className={cn("h-5 w-5", isActive && "text-primary")} />
             {item.label}
           </Link>
         )

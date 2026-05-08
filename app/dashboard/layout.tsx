@@ -28,10 +28,14 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-background">
       <Header profile={profile} />
-      <div className="container px-4 py-8">
+      <div className="container mx-auto px-6 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <aside className="lg:w-64 shrink-0">
-            <DashboardNav />
+            <div className="lg:sticky lg:top-24">
+              <div className="p-5 bg-card rounded-2xl border border-border">
+                <DashboardNav />
+              </div>
+            </div>
           </aside>
           <main className="flex-1 min-w-0">
             {children}
